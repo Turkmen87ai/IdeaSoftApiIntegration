@@ -14,6 +14,12 @@ public class Address
     public int Id { get; set; }
     
     /// <summary>
+    /// Müşteri kimliği
+    /// </summary>
+    [JsonPropertyName("customerId")]
+    public int CustomerId { get; set; }
+    
+    /// <summary>
     /// Adres başlığı
     /// </summary>
     [JsonPropertyName("title")]
@@ -35,37 +41,25 @@ public class Address
     /// Telefon numarası
     /// </summary>
     [JsonPropertyName("phone")]
-    public string Phone { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// E-posta adresi
-    /// </summary>
-    [JsonPropertyName("email")]
-    public string? Email { get; set; }
-    
-    /// <summary>
-    /// Şirket adı
-    /// </summary>
-    [JsonPropertyName("company")]
-    public string? Company { get; set; }
+    public string? Phone { get; set; }
     
     /// <summary>
     /// Adres satırı 1
     /// </summary>
-    [JsonPropertyName("address1")]
-    public string Address1 { get; set; } = string.Empty;
+    [JsonPropertyName("addressLine1")]
+    public string AddressLine1 { get; set; } = string.Empty;
     
     /// <summary>
     /// Adres satırı 2
     /// </summary>
-    [JsonPropertyName("address2")]
-    public string? Address2 { get; set; }
+    [JsonPropertyName("addressLine2")]
+    public string? AddressLine2 { get; set; }
     
     /// <summary>
-    /// Posta kodu
+    /// İlçe
     /// </summary>
-    [JsonPropertyName("postalCode")]
-    public string? PostalCode { get; set; }
+    [JsonPropertyName("district")]
+    public string? District { get; set; }
     
     /// <summary>
     /// Şehir
@@ -80,14 +74,20 @@ public class Address
     public string Country { get; set; } = string.Empty;
     
     /// <summary>
-    /// Vergi dairesi (fatura adresi için)
+    /// Posta kodu
     /// </summary>
-    [JsonPropertyName("taxOffice")]
-    public string? TaxOffice { get; set; }
+    [JsonPropertyName("zipCode")]
+    public string? ZipCode { get; set; }
     
     /// <summary>
-    /// Vergi numarası (fatura adresi için)
+    /// Adres oluşturulma tarihi
     /// </summary>
-    [JsonPropertyName("taxNumber")]
-    public string? TaxNumber { get; set; }
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; set; }
+    
+    /// <summary>
+    /// Adres güncelleme tarihi
+    /// </summary>
+    [JsonPropertyName("updatedAt")]
+    public DateTime? UpdatedAt { get; set; }
 }
