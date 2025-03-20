@@ -14,7 +14,7 @@ public class ProductImage
     public int Id { get; set; }
     
     /// <summary>
-    /// Görüntü dosya adı
+    /// Görüntü adı
     /// </summary>
     [JsonPropertyName("filename")]
     public string Filename { get; set; } = string.Empty;
@@ -26,20 +26,20 @@ public class ProductImage
     public string Url { get; set; } = string.Empty;
     
     /// <summary>
-    /// Küçük resim URL'si
-    /// </summary>
-    [JsonPropertyName("thumbnail")]
-    public string? Thumbnail { get; set; }
-    
-    /// <summary>
-    /// Görüntü başlığı
-    /// </summary>
-    [JsonPropertyName("title")]
-    public string? Title { get; set; }
-    
-    /// <summary>
     /// Görüntü sırası
     /// </summary>
-    [JsonPropertyName("sort")]
-    public int Sort { get; set; }
+    [JsonPropertyName("sortOrder")]
+    public int SortOrder { get; set; }
+    
+    /// <summary>
+    /// Görüntü eklenme tarihi
+    /// </summary>
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; set; }
+    
+    /// <summary>
+    /// Görüntü güncelleme tarihi
+    /// </summary>
+    [JsonPropertyName("updatedAt")]
+    public DateTime? UpdatedAt { get; set; }
 }
