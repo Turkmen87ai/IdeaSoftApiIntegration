@@ -41,6 +41,14 @@ $env:IDEASOFT_ACCESS_TOKEN = "ACCESS_TOKEN"
 dotnet run --project samples/IdeaSoftApi.Sample
 ```
 
+OAuth authorization code, refresh token veya hazır access token ile gerçek mağazada salt okunur bağlantı testi yapmak için [Console Test uygulamasını](samples/IdeaSoftApi.ConsoleTest/README.md) kullanın:
+
+```powershell
+dotnet run --project samples/IdeaSoftApi.ConsoleTest -- --self-test
+```
+
+Varsayılan self-test modu ağ veya kimlik bilgisi kullanmadan OAuth URL'si, Bearer başlığı, Admin API yolu ve token sızıntısı engelini doğrular. `--live` modu ürün, kategori ve sipariş uçlarından en fazla bir kayıt ister; hiçbir veriyi değiştirmez. Client ID, Client Secret ve token değerlerini yalnızca ortam değişkenlerinden okur ve diske yazmaz.
+
 ## 1. OAuth2 izin adresini oluşturma
 
 IdeaSoft, kullanıcı adı ve parolayı uygulamanıza vermek yerine OAuth2 Authorization Code akışını kullanır.

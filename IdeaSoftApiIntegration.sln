@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeaSoftApiClient.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeaSoftApi.Sample", "samples\IdeaSoftApi.Sample\IdeaSoftApi.Sample.csproj", "{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeaSoftApi.ConsoleTest", "samples\IdeaSoftApi.ConsoleTest\IdeaSoftApi.ConsoleTest.csproj", "{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

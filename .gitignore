@@ -12,3 +12,6 @@ coverage/
 .env.*
 !.env.example
 appsettings.*.local.json
+*.secrets.json
+*.tokens.json
+secrets/
