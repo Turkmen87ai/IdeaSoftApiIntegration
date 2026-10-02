@@ -15,6 +15,14 @@ IdeaSoft Admin API ile .NET 8 üzerinden çalışmayı kolaylaştıran açık ka
 - Hata kodu, cevap gövdesi ve istek kimliğini taşıyan `ApiException`
 - Harici test paketi gerektirmeyen hızlı test projesi
 
+## Öğrenme ve devir belgeleri
+
+- [Admin API ve Store API farkları](docs/ADMIN_STORE_API_REHBERI.md): yol, kapsam, OAuth, kullanım alanı, canlı grup/operasyon karşılaştırması ve gelecekte güvenli Store istemcisi tasarımı.
+- [Webhook rehberi](docs/WEBHOOK_REHBERI.md): canlı abonelik endpoint'indeki 41 topic, alanları belgelenmiş 37 V8 olayı, abonelik CRUD işlemleri, HMAC-SHA256 doğrulaması, 10 saniyelik yanıt kuralı ve .NET örneği.
+- [LLM bilgi haritası](docs/LLM_BILGI_HARITASI.md): farklı kodlama ajanları için kaynak önceliği, değişmezler, yasaklar ve doğrulama listesi.
+
+Bu kitaplık şu anda yalnız **Admin API** (`/admin-api`) çağrılarını uygular. Store API (`/api`) aynı token akışını kullansa da farklı bir endpoint sözleşmesidir; mevcut istemcinin taban yolunu değiştirerek kullanılmamalıdır.
+
 ## Gereksinimler
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
@@ -248,8 +256,9 @@ Tema ve dosya yükleme işlemleri paket/izin kısıtlarına bağlı olabilir. Ge
 
 - [IdeaSoft API kullanımı](https://www.ideasoft.com.tr/yardim/api-kullanimi/)
 - [IdeaSoft Admin ve Store API dokümanı](https://apidoc.ideasoft.dev/)
+- [IdeaSoft Webhooks dokümanı](https://apidoc.ideasoft.dev/docs/webhooks/5cc9374300b99-webhooks)
 - Repodaki `admin-swagger-prod.json`: Admin API OpenAPI anlık görüntüsü
-- Repodaki `swagger.json`: sınırlı/eski Store API anlık görüntüsü
+- Repodaki `swagger.json`: yalnız 6 yol/11 operasyon içeren sınırlı/eski Store API anlık görüntüsü; canlı Store API'nin 333 operasyonunu temsil etmez
 
 ## Güvenlik notları
 
