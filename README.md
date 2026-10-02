@@ -43,19 +43,11 @@ dotnet build
 dotnet run --project IdeaSoftApiClient.Tests
 ```
 
-Hazır örneği gerçek mağazanızla çalıştırmak için token'ı dosyaya yazmak yerine ortam değişkeni kullanın:
+`samples` altında yalnız iki açıkça ayrılmış örnek vardır: Admin API için [AdminApiTest](samples/AdminApiTest/README.md), Store API için [StoreApiTest](samples/StoreApiTest/README.md).
 
 ```powershell
-$env:IDEASOFT_STORE_URL = "https://magaza-adiniz.myideasoft.com"
-$env:IDEASOFT_ACCESS_TOKEN = "ACCESS_TOKEN"
-dotnet run --project samples/IdeaSoftApi.Sample
-```
-
-Admin API için [Admin Console Test](samples/IdeaSoftApi.ConsoleTest/README.md), Store API için ayrı [Store Console Test](samples/IdeaSoftStoreApi.ConsoleTest/README.md) uygulamasını kullanın:
-
-```powershell
-dotnet run --project samples/IdeaSoftApi.ConsoleTest -- --self-test
-dotnet run --project samples/IdeaSoftStoreApi.ConsoleTest -- --self-test
+dotnet run --project samples/AdminApiTest -- --self-test
+dotnet run --project samples/StoreApiTest -- --self-test
 ```
 
 İki uygulamanın varsayılan self-test modu ağ veya kimlik bilgisi kullanmadan OAuth URL'sini, Bearer başlığını, kendi API yolunu ve token sızıntısı engelini doğrular. `--live` modu kendi yüzeyindeki ürün, kategori ve sipariş uçlarından en fazla bir kayıt ister; hiçbir veriyi değiştirmez. Client ID, Client Secret ve token değerleri yalnızca ortam değişkenlerinden okunur ve diske yazılmaz.

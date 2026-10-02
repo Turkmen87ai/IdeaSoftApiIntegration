@@ -7,11 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeaSoftApiClient", "IdeaSo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeaSoftApiClient.Tests", "IdeaSoftApiClient.Tests\IdeaSoftApiClient.Tests.csproj", "{7EDD9F32-55E1-4C4B-9C35-8F17871DE8D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeaSoftApi.Sample", "samples\IdeaSoftApi.Sample\IdeaSoftApi.Sample.csproj", "{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminApiTest", "samples\AdminApiTest\AdminApiTest.csproj", "{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeaSoftApi.ConsoleTest", "samples\IdeaSoftApi.ConsoleTest\IdeaSoftApi.ConsoleTest.csproj", "{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeaSoftStoreApi.ConsoleTest", "samples\IdeaSoftStoreApi.ConsoleTest\IdeaSoftStoreApi.ConsoleTest.csproj", "{C8C7F3B3-9C8D-4D3D-9F56-77A8E2C1A901}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StoreApiTest", "samples\StoreApiTest\StoreApiTest.csproj", "{C8C7F3B3-9C8D-4D3D-9F56-77A8E2C1A901}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +25,6 @@ Global
 		{7EDD9F32-55E1-4C4B-9C35-8F17871DE8D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EDD9F32-55E1-4C4B-9C35-8F17871DE8D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EDD9F32-55E1-4C4B-9C35-8F17871DE8D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B5B52E5-667B-4CE0-B6D2-3C5161F0E44C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4EEC874-9A58-4B0B-BA82-8CF9CA52E4F0}.Release|Any CPU.ActiveCfg = Release|Any CPU

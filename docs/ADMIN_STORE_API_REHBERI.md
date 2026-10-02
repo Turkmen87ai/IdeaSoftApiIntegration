@@ -33,7 +33,7 @@ Bu benzetme yön gösterir; gerçek yetkiyi endpoint'in güncel dokümanı ve OA
 | Kimlik doğrulama | OAuth2 Authorization Code ile alınan Bearer token | Aynı OAuth2/Bearer akışı |
 | Doküman güvenlik gösterimi | Bearer Auth ve operasyon bazlı OAuth kapsamı | İncelenen operasyonlarda Bearer Auth |
 | Tipik kullanım | ERP/PIM/muhasebe, yönetim otomasyonu, site taşıma, içerik/tema, rapor, webhook aboneliği | Mağaza deneyimi, sepet, favoriler, müşteri adresleri ve daha dar kaynak işlemleri |
-| Bu repodaki destek | `IdeaSoftClient`, ayrı Admin Console Test | `IdeaSoftStoreClient`, ayrı Store Console Test |
+| Bu repodaki destek | `IdeaSoftClient`, ayrı `AdminApiTest` örneği | `IdeaSoftStoreClient`, ayrı `StoreApiTest` örneği |
 
 Sayılar canlı Stoplight navigasyonundan çıkarılmıştır. Bir operasyonun mağaza paketinde açık olması, verilen kullanıcı izinleri ve sürüm gibi ek koşullara bağlı olabilir.
 
@@ -139,7 +139,7 @@ Mevcut Admin istemcisinin davranışı değiştirilmeden şu ayrım uygulandı:
 3. Store istemcisi yalnız `api/` altındaki göreli yolları kabul eder.
 4. Canlı sayfalarda doğrulanan ortak ürün, kategori ve sipariş alanları mevcut esnek modellerle kullanılır; bilinmeyen alanlar `JsonExtensionData` ile korunur.
 5. Her yüzey için harici URL'ye Bearer token sızmasını engelleyen ayrı test bulunur.
-6. Store Console Test canlı mağazada yalnız ürün/kategori/sipariş GET çağrıları yapar ve en fazla birer kayıt ister.
+6. `StoreApiTest` canlı mağazada yalnız ürün/kategori/sipariş GET çağrıları yapar ve en fazla birer kayıt ister.
 7. `swagger.json` kod üretim kaynağı yapılmadı; yalnız 6 yol/11 operasyon içerir ve canlı 333 operasyonu temsil etmez.
 
 ## Sık yapılan hatalar
@@ -174,8 +174,8 @@ store_snapshot_warning: swagger.json_is_incomplete_6_paths_11_operations
 implementation_rule: never_switch_IdeaSoftClient_base_path_to_add_store_support
 admin_client: IdeaSoftClient
 store_client: IdeaSoftStoreClient
-admin_console_test: samples/IdeaSoftApi.ConsoleTest
-store_console_test: samples/IdeaSoftStoreApi.ConsoleTest
+admin_api_test: samples/AdminApiTest
+store_api_test: samples/StoreApiTest
 ```
 
 ## Resmi kaynaklar

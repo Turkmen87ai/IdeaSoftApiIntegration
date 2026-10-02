@@ -1,6 +1,6 @@
-# IdeaSoft Store API Console Test
+# StoreApiTest — IdeaSoft Store API Test Örneği
 
-Bu uygulama `IdeaSoftStoreClient` sınıfını ayrı olarak test eder. Admin Console Test ile karıştırılmaması için kendi projesi ve komutları vardır.
+Bu uygulama `IdeaSoftStoreClient` sınıfını ayrı olarak test eder. Admin API için ayrı [AdminApiTest](../AdminApiTest/README.md) projesi vardır.
 
 - Yalnız `/api/products`, `/api/categories` ve `/api/orders` yollarına `GET` gönderir.
 - `/admin-api` çağrısı yapmaz.
@@ -11,7 +11,7 @@ Bu uygulama `IdeaSoftStoreClient` sınıfını ayrı olarak test eder. Admin Con
 ## Çevrimdışı self-test
 
 ```powershell
-dotnet run --project samples/IdeaSoftStoreApi.ConsoleTest -- --self-test
+dotnet run --project samples/StoreApiTest -- --self-test
 ```
 
 Bu mod şunları doğrular:
@@ -27,7 +27,7 @@ Bu mod şunları doğrular:
 $env:IDEASOFT_STORE_URL = "https://magaza-adiniz.myideasoft.com"
 $env:IDEASOFT_ACCESS_TOKEN = "ACCESS_TOKEN_DEGERINIZ"
 
-dotnet run --project samples/IdeaSoftStoreApi.ConsoleTest -- --live
+dotnet run --project samples/StoreApiTest -- --live
 
 Remove-Item Env:IDEASOFT_ACCESS_TOKEN
 ```
@@ -40,7 +40,7 @@ $env:IDEASOFT_CLIENT_ID = "CLIENT_ID_DEGERINIZ"
 $env:IDEASOFT_CLIENT_SECRET = "CLIENT_SECRET_DEGERINIZ"
 $env:IDEASOFT_REDIRECT_URI = "https://panelde-kayitli-adres.example/callback"
 
-dotnet run --project samples/IdeaSoftStoreApi.ConsoleTest -- --live
+dotnet run --project samples/StoreApiTest -- --live
 ```
 
 Uygulama OAuth izin adresini üretir. İzin sonrasında yönlendirilen tam URL konsola yapıştırılır; `state` doğrulanmadan token istenmez.
@@ -52,7 +52,7 @@ Yukarıdaki Client ID, Client Secret ve Redirect URI değişkenlerine ek olarak:
 ```powershell
 $env:IDEASOFT_REFRESH_TOKEN = "REFRESH_TOKEN_DEGERINIZ"
 
-dotnet run --project samples/IdeaSoftStoreApi.ConsoleTest -- --live
+dotnet run --project samples/StoreApiTest -- --live
 ```
 
 IdeaSoft yenilemede yeni refresh token döndürebilir. Bu örnek token'ı kalıcı saklamaz. Gerçek uygulama dönen yeni değeri şifreli secret manager içinde eskisinin yerine yazmalıdır.

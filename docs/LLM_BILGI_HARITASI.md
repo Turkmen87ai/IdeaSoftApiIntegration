@@ -10,7 +10,7 @@ Son doğrulama: **2 Ekim 2026**
 2. [Admin API ve Store API rehberi](ADMIN_STORE_API_REHBERI.md)
 3. [Webhook rehberi](WEBHOOK_REHBERI.md)
 4. Admin kodu değişecekse `IdeaSoftApiClient/IdeaSoftClient.cs`; Store kodu değişecekse `IdeaSoftApiClient/IdeaSoftStoreClient.cs`
-5. İlgili console test değişecekse Admin ve Store test README dosyaları
+5. İlgili örnek değişecekse `samples/AdminApiTest` veya `samples/StoreApiTest` README dosyası
 
 `.ai-workspace` klasörü varsa yerel çalışma protokolü, PRD, sorun günlüğü ve görev kilidi için ayrıca tamamen okunmalıdır. Bu klasör bilerek Git'e gönderilmez ve yeni klonda bulunmayabilir.
 
@@ -83,7 +83,7 @@ Canlı belgede açıkça yazmayan davranışı “IdeaSoft garantisi” gibi anl
 2. Store istemcisinde yalnız `/api` altındaki göreli yolları kabul et.
 3. Canlı Store endpoint sayfalarından istek/cevap sözleşmesi çıkar.
 4. Admin ve Store modellerini alan alan karşılaştır.
-5. Ayrı davranış testlerini ve `IdeaSoftStoreApi.ConsoleTest` self-testini güncelle.
+5. Ayrı davranış testlerini ve `StoreApiTest` self-testini güncelle.
 6. Secret'ları yalnız ortam değişkeni/secret manager üzerinden al.
 7. Canlı yazma testini açık kullanıcı onayı olmadan çalıştırma.
 
@@ -105,8 +105,8 @@ Doküman değişikliği bile olsa en az şu komutlar çalıştırılmalıdır:
 ```powershell
 dotnet build IdeaSoftApiIntegration.sln -c Release -warnaserror
 dotnet run --project IdeaSoftApiClient.Tests -c Release
-dotnet run --project samples/IdeaSoftApi.ConsoleTest -c Release -- --self-test
-dotnet run --project samples/IdeaSoftStoreApi.ConsoleTest -c Release -- --self-test
+dotnet run --project samples/AdminApiTest -c Release -- --self-test
+dotnet run --project samples/StoreApiTest -c Release -- --self-test
 git diff --check
 git status --short
 ```
