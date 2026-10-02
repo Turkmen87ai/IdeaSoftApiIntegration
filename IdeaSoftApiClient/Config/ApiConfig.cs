@@ -1,54 +1,45 @@
 namespace IdeaSoftApiClient.Config;
 
-/// <summary>
-/// IdeaSoft API yapılandırması için kullanılan sınıf
-/// </summary>
-public class ApiConfig
+/// <summary>IdeaSoft istemcisinin bağlantı ve yeniden deneme ayarları.</summary>
+public sealed class ApiConfig
 {
-    /// <summary>
-    /// API'nin temel URL'si (örn: https://magaza-adiniz.myideasoft.com)
-    /// </summary>
-    public string BaseUrl { get; }
-    
-    /// <summary>
-    /// API için kimlik doğrulama anahtarı
-    /// </summary>
-    public string ApiKey { get; }
-    
-    /// <summary>
-    /// API için kimlik doğrulama parolası
-    /// </summary>
-    public string ApiSecret { get; }
-    
-    /// <summary>
-    /// API istekleri için zaman aşımı süresi (milisaniye)
-    /// </summary>
-    public int TimeoutMs { get; }
-    
-    /// <summary>
-    /// API yapılandırmasını oluşturur
-    /// </summary>
-    /// <param name="baseUrl">API'nin temel URL'si (varsayılan: https://dentrealmarket.myideasoft.com)</param>
-    /// <param name="apiKey">API için kimlik doğrulama anahtarı</param>
-    /// <param name="apiSecret">API için kimlik doğrulama parolası</param>
-    /// <param name="timeoutMs">API istekleri için zaman aşımı süresi (milisaniye)</param>
-    public ApiConfig(string baseUrl = "https://dentrealmarket.myideasoft.com", string apiKey = "", string apiSecret = "", int timeoutMs = 30000)
+    /// <param name="storeUrl">Mağaza kök adresi. Örnek: https://magaza-adiniz.myideasoft.com</param>
+    public ApiConfig(string storeUrl)
     {
-        if (string.IsNullOrEmpty(baseUrl))
-            throw new ArgumentNullException(nameof(baseUrl), "Temel URL boş olamaz");
-            
-        if (string.IsNullOrEmpty(apiKey))
-            throw new ArgumentNullException(nameof(apiKey), "API anahtarı boş olamaz");
-            
-        if (string.IsNullOrEmpty(apiSecret))
-            throw new ArgumentNullException(nameof(apiSecret), "API parolası boş olamaz");
-            
-        if (timeoutMs <= 0)
-            throw new ArgumentOutOfRangeException(nameof(timeoutMs), "Zaman aşımı pozitif olmalıdır");
-            
-        BaseUrl = baseUrl.TrimEnd('/');
-        ApiKey = apiKey;
-        ApiSecret = apiSecret;
-        TimeoutMs = timeoutMs;
+        if (!Uri.TryCreate(storeUrl, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp))
+        {
+            throw new ArgumentException("Geçerli bir HTTP/HTTPS mağaza adresi girin.", nameof(storeUrl));
+        }
+
+        StoreUri = new Uri(uri.GetLeftPart(UriPartial.Authority).TrimEnd('/') + "/", UriKind.Absolute);
+    }
+
+    /// <summary>Mağazanın kök adresi.</summary>
+    public Uri StoreUri { get; }
+
+    /// <summary>HTTP isteği zaman aşımı. Varsayılan 100 saniyedir.</summary>
+    public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(100);
+
+    /// <summary>429 ve geçici sunucu hatalarında yapılacak en fazla ek deneme sayısı.</summary>
+    public int MaxRetryCount { get; init; } = 3;
+
+    /// <summary>Sunucu Retry-After başlığı göndermediğinde ilk bekleme süresi.</summary>
+    public TimeSpan RetryBaseDelay { get; init; } = TimeSpan.FromSeconds(1);
+
+    /// <summary>
+    /// POST gibi tekrarlandığında çift kayıt oluşturabilecek metotlarda otomatik retry'ı açar.
+    /// Varsayılan false değerini yalnız hedef operasyonun idempotent olduğunu biliyorsanız değiştirin.
+    /// </summary>
+    public bool RetryNonIdempotentRequests { get; init; }
+
+    internal void Validate()
+    {
+        if (Timeout <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(Timeout), "Zaman aşımı sıfırdan büyük olmalıdır.");
+        if (MaxRetryCount is < 0 or > 10)
+            throw new ArgumentOutOfRangeException(nameof(MaxRetryCount), "Yeniden deneme sayısı 0 ile 10 arasında olmalıdır.");
+        if (RetryBaseDelay < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(RetryBaseDelay), "Bekleme süresi negatif olamaz.");
     }
 }

@@ -4,12 +4,20 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <PackageId>IdeaSoftApiClient</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>İsmail Türkmen</Authors>
+    <Description>OAuth2 destekli, .NET 8 için sade IdeaSoft Admin API istemcisi.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Turkmen87ai/IdeaSoftApiIntegration</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.3" />
-    <PackageReference Include="System.Net.Http.Json" Version="9.0.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.3" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

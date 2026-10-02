@@ -3,23 +3,16 @@ using System.Text.Json.Serialization;
 
 namespace IdeaSoftApiClient.Models;
 
-/// <summary>IdeaSoft kategori modelinin en sık kullanılan alanları.</summary>
-public sealed class Category
+public sealed class Brand
 {
     [JsonPropertyName("id")] public long Id { get; set; }
     [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
     [JsonPropertyName("slug")] public string? Slug { get; set; }
-    [JsonPropertyName("sortOrder")] public int? SortOrder { get; set; }
     [JsonPropertyName("status")] public int? Status { get; set; }
-    [JsonPropertyName("imageFile")] public string? ImageFile { get; set; }
+    [JsonPropertyName("sortOrder")] public int? SortOrder { get; set; }
     [JsonPropertyName("imageUrl")] public string? ImageUrl { get; set; }
     [JsonPropertyName("attachment")] public string? Attachment { get; set; }
     [JsonPropertyName("showcaseContent")] public string? ShowcaseContent { get; set; }
     [JsonPropertyName("showcaseFooterContent")] public string? ShowcaseFooterContent { get; set; }
-    [JsonPropertyName("pageTitle")] public string? PageTitle { get; set; }
-    [JsonPropertyName("metaDescription")] public string? MetaDescription { get; set; }
-    [JsonPropertyName("metaKeywords")] public string? MetaKeywords { get; set; }
-    [JsonPropertyName("parent")] public Category? Parent { get; set; }
-    [JsonPropertyName("createdAt")] public DateTimeOffset? CreatedAt { get; set; }
     [JsonExtensionData] public Dictionary<string, JsonElement>? AdditionalData { get; set; }
 }

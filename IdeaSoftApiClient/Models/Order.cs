@@ -1,105 +1,28 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace IdeaSoftApiClient.Models;
 
-/// <summary>
-/// IdeaSoft sipariş modelini temsil eder
-/// </summary>
-public class Order
+/// <summary>IdeaSoft sipariş modelinin en sık kullanılan alanları.</summary>
+public sealed class Order
 {
-    /// <summary>
-    /// Sipariş kimliği
-    /// </summary>
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-    
-    /// <summary>
-    /// Sipariş numarası
-    /// </summary>
-    [JsonPropertyName("orderNumber")]
-    public string OrderNumber { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// Müşteri kimliği
-    /// </summary>
-    [JsonPropertyName("customerId")]
-    public int CustomerId { get; set; }
-    
-    /// <summary>
-    /// Sipariş durumu
-    /// </summary>
-    [JsonPropertyName("status")]
-    public string Status { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// Ödeme türü
-    /// </summary>
-    [JsonPropertyName("paymentType")]
-    public string PaymentType { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// Kargo firması
-    /// </summary>
-    [JsonPropertyName("shippingProvider")]
-    public string? ShippingProvider { get; set; }
-    
-    /// <summary>
-    /// Kargo izleme numarası
-    /// </summary>
-    [JsonPropertyName("trackingNumber")]
-    public string? TrackingNumber { get; set; }
-    
-    /// <summary>
-    /// Sipariş toplamı
-    /// </summary>
-    [JsonPropertyName("total")]
-    public decimal Total { get; set; }
-    
-    /// <summary>
-    /// Kargo ücreti
-    /// </summary>
-    [JsonPropertyName("shippingAmount")]
-    public decimal ShippingAmount { get; set; }
-    
-    /// <summary>
-    /// Sipariş kalemi sayısı
-    /// </summary>
-    [JsonPropertyName("itemCount")]
-    public int ItemCount { get; set; }
-    
-    /// <summary>
-    /// Sipariş notları
-    /// </summary>
-    [JsonPropertyName("notes")]
-    public string? Notes { get; set; }
-    
-    /// <summary>
-    /// Sipariş oluşturulma tarihi
-    /// </summary>
-    [JsonPropertyName("createdAt")]
-    public DateTime CreatedAt { get; set; }
-    
-    /// <summary>
-    /// Sipariş güncelleme tarihi
-    /// </summary>
-    [JsonPropertyName("updatedAt")]
-    public DateTime? UpdatedAt { get; set; }
-    
-    /// <summary>
-    /// Teslimat adresi
-    /// </summary>
-    [JsonPropertyName("shippingAddress")]
-    public Address? ShippingAddress { get; set; }
-    
-    /// <summary>
-    /// Fatura adresi
-    /// </summary>
-    [JsonPropertyName("billingAddress")]
-    public Address? BillingAddress { get; set; }
-    
-    /// <summary>
-    /// Sipariş kalemleri
-    /// </summary>
-    [JsonPropertyName("items")]
-    public List<OrderItem>? Items { get; set; }
+    [JsonPropertyName("id")] public long Id { get; set; }
+    [JsonPropertyName("transactionId")] public string? TransactionId { get; set; }
+    [JsonPropertyName("customerFirstname")] public string? CustomerFirstName { get; set; }
+    [JsonPropertyName("customerSurname")] public string? CustomerSurname { get; set; }
+    [JsonPropertyName("customerEmail")] public string? CustomerEmail { get; set; }
+    [JsonPropertyName("customerPhone")] public string? CustomerPhone { get; set; }
+    [JsonPropertyName("status")] public string? Status { get; set; }
+    [JsonPropertyName("paymentStatus")] public string? PaymentStatus { get; set; }
+    [JsonPropertyName("paymentTypeName")] public string? PaymentTypeName { get; set; }
+    [JsonPropertyName("currency")] public string? Currency { get; set; }
+    [JsonPropertyName("generalAmount")] public decimal? GeneralAmount { get; set; }
+    [JsonPropertyName("finalAmount")] public decimal? FinalAmount { get; set; }
+    [JsonPropertyName("shippingAmount")] public decimal? ShippingAmount { get; set; }
+    [JsonPropertyName("shippingProviderName")] public string? ShippingProviderName { get; set; }
+    [JsonPropertyName("shippingTrackingCode")] public string? ShippingTrackingCode { get; set; }
+    [JsonPropertyName("orderItems")] public List<OrderItem>? Items { get; set; }
+    [JsonPropertyName("createdAt")] public DateTimeOffset? CreatedAt { get; set; }
+    [JsonPropertyName("updatedAt")] public DateTimeOffset? UpdatedAt { get; set; }
+    [JsonExtensionData] public Dictionary<string, JsonElement>? AdditionalData { get; set; }
 }

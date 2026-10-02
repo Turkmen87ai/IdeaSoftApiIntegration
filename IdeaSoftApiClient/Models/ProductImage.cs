@@ -1,45 +1,20 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace IdeaSoftApiClient.Models;
 
-/// <summary>
-/// IdeaSoft ürün görüntüsü modelini temsil eder
-/// </summary>
-public class ProductImage
+/// <summary>IdeaSoft ürün görseli.</summary>
+public sealed class ProductImage
 {
-    /// <summary>
-    /// Görüntü kimliği
-    /// </summary>
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-    
-    /// <summary>
-    /// Görüntü adı
-    /// </summary>
-    [JsonPropertyName("filename")]
-    public string Filename { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// Görüntü URL'si
-    /// </summary>
-    [JsonPropertyName("url")]
-    public string Url { get; set; } = string.Empty;
-    
-    /// <summary>
-    /// Görüntü sırası
-    /// </summary>
-    [JsonPropertyName("sortOrder")]
-    public int SortOrder { get; set; }
-    
-    /// <summary>
-    /// Görüntü eklenme tarihi
-    /// </summary>
-    [JsonPropertyName("createdAt")]
-    public DateTime CreatedAt { get; set; }
-    
-    /// <summary>
-    /// Görüntü güncelleme tarihi
-    /// </summary>
-    [JsonPropertyName("updatedAt")]
-    public DateTime? UpdatedAt { get; set; }
+    [JsonPropertyName("id")] public long Id { get; set; }
+    [JsonPropertyName("filename")] public string? FileName { get; set; }
+    [JsonPropertyName("extension")] public string? Extension { get; set; }
+    [JsonPropertyName("sortOrder")] public int? SortOrder { get; set; }
+    [JsonPropertyName("thumbUrl")] public string? ThumbnailUrl { get; set; }
+    [JsonPropertyName("originalUrl")] public string? OriginalUrl { get; set; }
+
+    /// <summary>POST sırasında `data:image/jpeg;base64,...` biçimindeki görsel.</summary>
+    [JsonPropertyName("attachment")] public string? Attachment { get; set; }
+
+    [JsonExtensionData] public Dictionary<string, JsonElement>? AdditionalData { get; set; }
 }
