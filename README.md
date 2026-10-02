@@ -1,27 +1,29 @@
 # IdeaSoft API Integration
 
-IdeaSoft Admin API ile .NET 8 üzerinden çalışmayı kolaylaştıran açık kaynak bir C# istemcisidir. Projenin amacı, OAuth2 sürecini ve günlük API çağrılarını yeni başlayan bir geliştiricinin de takip edebileceği kadar açık hale getirmektir.
+IdeaSoft Admin API ve Store API ile .NET 8 üzerinden çalışmayı kolaylaştıran açık kaynak bir C# istemcisidir. Projenin amacı, OAuth2 sürecini ve günlük API çağrılarını yeni başlayan bir geliştiricinin de takip edebileceği kadar açık hale getirmektir.
 
 > Bu proje IdeaSoft'un resmi SDK'sı değildir. Canlı mağazada yazma veya silme işlemi yapmadan önce test verisiyle deneyin ve gerekli API izinlerini en dar kapsamda verin.
 
 ## Neler var?
 
 - Güncel IdeaSoft OAuth2 Authorization Code akışı
-- `Bearer` access token ile Admin API çağrıları
+- `Bearer` access token ile ayrı Admin API ve Store API istemcileri
 - Access token süresi dolmadan otomatik yenileme seçeneği
 - 429, 502, 503 ve 504 cevaplarında kontrollü yeniden deneme
-- Ürün, kategori, sipariş, üye, marka, sayfa ve tema için hazır istemciler
+- Admin API'de ürün, kategori, sipariş, üye, marka, sayfa ve tema için hazır istemciler
+- Store API'de ürün, kategori ve sipariş için hazır istemciler
 - Diğer bütün Admin API yolları için genel `SendAsync` ve `Resource<T>` metotları
+- Diğer Store API yolları için ayrı `IdeaSoftStoreClient.SendAsync` ve `Resource<T>` metotları
 - Hata kodu, cevap gövdesi ve istek kimliğini taşıyan `ApiException`
-- Harici test paketi gerektirmeyen hızlı test projesi
+- Harici test paketi gerektirmeyen ayrı Admin ve Store test projeleri
 
 ## Öğrenme ve devir belgeleri
 
-- [Admin API ve Store API farkları](docs/ADMIN_STORE_API_REHBERI.md): yol, kapsam, OAuth, kullanım alanı, canlı grup/operasyon karşılaştırması ve gelecekte güvenli Store istemcisi tasarımı.
+- [Admin API ve Store API farkları](docs/ADMIN_STORE_API_REHBERI.md): yol, kapsam, OAuth, kullanım alanı, canlı grup/operasyon karşılaştırması ve iki istemcinin güvenli ayrımı.
 - [Webhook rehberi](docs/WEBHOOK_REHBERI.md): canlı abonelik endpoint'indeki 41 topic, alanları belgelenmiş 37 V8 olayı, abonelik CRUD işlemleri, HMAC-SHA256 doğrulaması, 10 saniyelik yanıt kuralı ve .NET örneği.
 - [LLM bilgi haritası](docs/LLM_BILGI_HARITASI.md): farklı kodlama ajanları için kaynak önceliği, değişmezler, yasaklar ve doğrulama listesi.
 
-Bu kitaplık şu anda yalnız **Admin API** (`/admin-api`) çağrılarını uygular. Store API (`/api`) aynı token akışını kullansa da farklı bir endpoint sözleşmesidir; mevcut istemcinin taban yolunu değiştirerek kullanılmamalıdır.
+`IdeaSoftClient` yalnız **Admin API** (`/admin-api`), `IdeaSoftStoreClient` yalnız **Store API** (`/api`) çağrılarını yapar. Aynı token akışını kullansalar da endpoint sözleşmeleri ve test uygulamaları ayrıdır.
 
 ## Gereksinimler
 
@@ -49,13 +51,14 @@ $env:IDEASOFT_ACCESS_TOKEN = "ACCESS_TOKEN"
 dotnet run --project samples/IdeaSoftApi.Sample
 ```
 
-OAuth authorization code, refresh token veya hazır access token ile gerçek mağazada salt okunur bağlantı testi yapmak için [Console Test uygulamasını](samples/IdeaSoftApi.ConsoleTest/README.md) kullanın:
+Admin API için [Admin Console Test](samples/IdeaSoftApi.ConsoleTest/README.md), Store API için ayrı [Store Console Test](samples/IdeaSoftStoreApi.ConsoleTest/README.md) uygulamasını kullanın:
 
 ```powershell
 dotnet run --project samples/IdeaSoftApi.ConsoleTest -- --self-test
+dotnet run --project samples/IdeaSoftStoreApi.ConsoleTest -- --self-test
 ```
 
-Varsayılan self-test modu ağ veya kimlik bilgisi kullanmadan OAuth URL'si, Bearer başlığı, Admin API yolu ve token sızıntısı engelini doğrular. `--live` modu ürün, kategori ve sipariş uçlarından en fazla bir kayıt ister; hiçbir veriyi değiştirmez. Client ID, Client Secret ve token değerlerini yalnızca ortam değişkenlerinden okur ve diske yazmaz.
+İki uygulamanın varsayılan self-test modu ağ veya kimlik bilgisi kullanmadan OAuth URL'sini, Bearer başlığını, kendi API yolunu ve token sızıntısı engelini doğrular. `--live` modu kendi yüzeyindeki ürün, kategori ve sipariş uçlarından en fazla bir kayıt ister; hiçbir veriyi değiştirmez. Client ID, Client Secret ve token değerleri yalnızca ortam değişkenlerinden okunur ve diske yazılmaz.
 
 ## 1. OAuth2 izin adresini oluşturma
 
@@ -97,7 +100,7 @@ Console.WriteLine(token.ExpiresAt);
 
 Access token yaklaşık 24 saat, refresh token yaklaşık 2 ay geçerlidir. IdeaSoft her yenilemede yeni refresh token da döndürür; eski refresh token'ın üzerine yenisini güvenli biçimde kaydedin.
 
-## 3. API istemcisini kullanma
+## 3. Admin API istemcisini kullanma
 
 Elinizde geçerli bir access token varsa en kısa kullanım:
 
@@ -157,6 +160,36 @@ await client.Products.DeleteAsync(created.Data.Id);
 ```
 
 Hazır kaynaklar: `Products`, `Categories`, `Orders`, `Members`, `Brands`, `Pages` ve `Themes`.
+
+## 4. Store API istemcisini kullanma
+
+Store API için Admin istemcisinin taban yolunu değiştirmeyin. Ayrı `IdeaSoftStoreClient` kullanın:
+
+```csharp
+using IdeaSoftApiClient;
+using IdeaSoftApiClient.Config;
+
+var config = new ApiConfig("https://magaza-adiniz.myideasoft.com");
+using var storeClient = new IdeaSoftStoreClient(config, accessToken: "ACCESS_TOKEN");
+
+var response = await storeClient.Products.ListAsync(page: 1, limit: 20);
+
+foreach (var product in response.Data)
+{
+    Console.WriteLine($"{product.Id}: {product.Name} - {product.Price}");
+}
+```
+
+Hazır Store kaynakları: `Products`, `Categories` ve `Orders`. Diğer Store kaynakları için canlı endpoint dokümanını kontrol ederek `Resource<T>` veya `SendAsync<T>` kullanın:
+
+```csharp
+using System.Text.Json;
+
+var brands = storeClient.Resource<JsonElement>("brands");
+var firstPage = await brands.ListAsync(limit: 20);
+```
+
+`IdeaSoftStoreClient.SendAsync` yoluna `api/` eklemeyin; istemci güvenli biçimde kendisi ekler.
 
 ## Otomatik token yenileme
 

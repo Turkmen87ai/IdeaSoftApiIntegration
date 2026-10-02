@@ -11,7 +11,7 @@ Son canlı doküman incelemesi: **2 Ekim 2026**
 - İkisi de aynı mağaza alan adını ve OAuth2 ile alınan Bearer access token'ı kullanır.
 - Store API adı, bu API'nin anonim veya tarayıcıya gömülebilecek bir API olduğu anlamına gelmez. İncelenen güncel Store endpoint'i de `Authorization: Bearer ...` ister.
 - Webhook abonelikleri Store API altında değildir. `/admin-api/client_webhooks` üzerinden yönetilir ve ayrıntılar [Webhook rehberinde](WEBHOOK_REHBERI.md) anlatılır.
-- Bu repodaki `IdeaSoftClient` şu anda **yalnız Admin API** içindir. `SendAsync` yoluna `api/` vererek Store API çağırmaya çalışmayın.
+- Bu repoda `IdeaSoftClient` yalnız Admin, `IdeaSoftStoreClient` yalnız Store API içindir. Admin istemcisine `api/`, Store istemcisine `admin-api/` öneki vermeyin; ikisi de kendi önekini ekler.
 
 ## Basit benzetme
 
@@ -33,7 +33,7 @@ Bu benzetme yön gösterir; gerçek yetkiyi endpoint'in güncel dokümanı ve OA
 | Kimlik doğrulama | OAuth2 Authorization Code ile alınan Bearer token | Aynı OAuth2/Bearer akışı |
 | Doküman güvenlik gösterimi | Bearer Auth ve operasyon bazlı OAuth kapsamı | İncelenen operasyonlarda Bearer Auth |
 | Tipik kullanım | ERP/PIM/muhasebe, yönetim otomasyonu, site taşıma, içerik/tema, rapor, webhook aboneliği | Mağaza deneyimi, sepet, favoriler, müşteri adresleri ve daha dar kaynak işlemleri |
-| Bu repodaki destek | Var; `IdeaSoftClient` Admin tabanını güvenli biçimde ekler | Henüz yok; ayrı istemci gerektirir |
+| Bu repodaki destek | `IdeaSoftClient`, ayrı Admin Console Test | `IdeaSoftStoreClient`, ayrı Store Console Test |
 
 Sayılar canlı Stoplight navigasyonundan çıkarılmıştır. Bir operasyonun mağaza paketinde açık olması, verilen kullanıcı izinleri ve sürüm gibi ek koşullara bağlı olabilir.
 
@@ -130,17 +130,17 @@ Buradaki “yalnız” ifadesi grup adını karşılaştırır. Admin tarafında
 
 </details>
 
-## Bu repoda Store API nasıl eklenmeli?
+## Bu repoda Store API nasıl eklendi?
 
-Store desteği gelecekte eklenecekse mevcut `IdeaSoftClient` tabanı sessizce değiştirilmemelidir. Önerilen güvenli yapı:
+Mevcut Admin istemcisinin davranışı değiştirilmeden şu ayrım uygulandı:
 
 1. `IdeaSoftClient` Admin API için geriye uyumlu kalır.
-2. Ayrı bir `IdeaSoftStoreClient` oluşturulur.
+2. Ayrı `IdeaSoftStoreClient` Store API için oluşturuldu.
 3. Store istemcisi yalnız `api/` altındaki göreli yolları kabul eder.
-4. Admin ve Store modelleri yalnız şemaları gerçekten aynıysa paylaşılır; isim benzerliği tek başına yeterli değildir.
-5. Her yüzey için harici URL'ye Bearer token sızmasını engelleyen test bulunur.
-6. Store testleri canlı mağazada varsayılan olarak yalnız GET çalıştırır.
-7. `swagger.json` güncel Store sözleşmesi sanılarak kod üretilmez; dosya yalnız 6 yol/11 operasyon içerir ve canlı 333 operasyonu temsil etmez.
+4. Canlı sayfalarda doğrulanan ortak ürün, kategori ve sipariş alanları mevcut esnek modellerle kullanılır; bilinmeyen alanlar `JsonExtensionData` ile korunur.
+5. Her yüzey için harici URL'ye Bearer token sızmasını engelleyen ayrı test bulunur.
+6. Store Console Test canlı mağazada yalnız ürün/kategori/sipariş GET çağrıları yapar ve en fazla birer kayıt ister.
+7. `swagger.json` kod üretim kaynağı yapılmadı; yalnız 6 yol/11 operasyon içerir ve canlı 333 operasyonu temsil etmez.
 
 ## Sık yapılan hatalar
 
@@ -172,6 +172,10 @@ webhook_subscription_surface: admin_api
 webhook_subscription_path: /admin-api/client_webhooks
 store_snapshot_warning: swagger.json_is_incomplete_6_paths_11_operations
 implementation_rule: never_switch_IdeaSoftClient_base_path_to_add_store_support
+admin_client: IdeaSoftClient
+store_client: IdeaSoftStoreClient
+admin_console_test: samples/IdeaSoftApi.ConsoleTest
+store_console_test: samples/IdeaSoftStoreApi.ConsoleTest
 ```
 
 ## Resmi kaynaklar

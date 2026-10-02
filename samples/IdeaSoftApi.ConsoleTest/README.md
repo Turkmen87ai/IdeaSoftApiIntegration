@@ -1,6 +1,6 @@
-# IdeaSoft Console Test
+# IdeaSoft Admin API Console Test
 
-Bu uygulama gerçek bir IdeaSoft mağazasında OAuth ve Admin API bağlantısını güvenli biçimde doğrular.
+Bu uygulama gerçek bir IdeaSoft mağazasında OAuth ve yalnız Admin API (`/admin-api`) bağlantısını güvenli biçimde doğrular. Store API için ayrı [Store API Console Test](../IdeaSoftStoreApi.ConsoleTest/README.md) projesini kullanın.
 
 - Ürün, kategori ve sipariş uçlarına yalnızca `GET` isteği gönderir.
 - Client Secret, access token ve refresh token kaynak koda yazılmaz.
@@ -15,7 +15,7 @@ Varsayılan mod ağ bağlantısı ve gerçek kimlik bilgisi kullanmadan kütüph
 dotnet run --project samples/IdeaSoftApi.ConsoleTest -- --self-test
 ```
 
-Bu mod mağaza URL normalizasyonunu, OAuth izin URL'sini ve state değerini, Bearer başlığını, `/admin-api/` yolunu ve harici URL'ye token sızdırma engelini test eder.
+Bu mod mağaza URL normalizasyonunu, OAuth izin URL'sini ve state değerini, Bearer başlığını, `/admin-api/` yolunu ve harici URL'ye token sızdırma engelini test eder. `/api/` Store yolu bu uygulamanın kapsamında değildir.
 
 Yerel kontrollerden sonra gerçek mağaza testini de çalıştırmak için:
 

@@ -9,21 +9,22 @@ Son doğrulama: **2 Ekim 2026**
 1. Kök [README](../README.md)
 2. [Admin API ve Store API rehberi](ADMIN_STORE_API_REHBERI.md)
 3. [Webhook rehberi](WEBHOOK_REHBERI.md)
-4. Store kodu değişecekse `IdeaSoftApiClient/IdeaSoftClient.cs` ve ilgili testler
-5. Console test değişecekse `samples/IdeaSoftApi.ConsoleTest/README.md`
+4. Admin kodu değişecekse `IdeaSoftApiClient/IdeaSoftClient.cs`; Store kodu değişecekse `IdeaSoftApiClient/IdeaSoftStoreClient.cs`
+5. İlgili console test değişecekse Admin ve Store test README dosyaları
 
 `.ai-workspace` klasörü varsa yerel çalışma protokolü, PRD, sorun günlüğü ve görev kilidi için ayrıca tamamen okunmalıdır. Bu klasör bilerek Git'e gönderilmez ve yeni klonda bulunmayabilir.
 
 ## Tek cümlelik mimari
 
-Bu repo .NET 8 ile yazılmış, OAuth2/Bearer kullanan, dış URL'ye token sızmasını engelleyen ve şu anda yalnız `/admin-api` yüzeyini destekleyen bir IdeaSoft istemcisidir.
+Bu repo .NET 8 ile yazılmış, OAuth2/Bearer kullanan ve dış URL'ye token sızmasını engelleyen iki ayrı istemci sunar: Admin için `IdeaSoftClient`, Store için `IdeaSoftStoreClient`.
 
 ## Doğrulanmış sabitler
 
 ```yaml
 runtime: dotnet_8
-current_public_client: IdeaSoftClient
-current_surface: admin_api
+public_clients:
+  admin: IdeaSoftClient
+  store: IdeaSoftStoreClient
 admin_path_prefix: /admin-api
 store_path_prefix: /api
 oauth_authorization_path: /panel/auth
@@ -56,7 +57,7 @@ Canlı belgede açıkça yazmayan davranışı “IdeaSoft garantisi” gibi anl
 |---|---|---|
 | Admin canlı kapsam | 903 operasyon / 176 grup | Genel `SendAsync<T>` yeni yolları çağırabilir; yine de endpoint sayfasını kontrol et |
 | Yerel Admin snapshot | 875 operasyon / 524 yol | Canlı dokümandan eski olduğunu varsay |
-| Store canlı kapsam | 333 operasyon / 74 grup | Ayrı istemci olmadan mevcut client'a karıştırma |
+| Store canlı kapsam | 333 operasyon / 74 grup | Yalnız `IdeaSoftStoreClient` ile çağır |
 | Yerel `swagger.json` | 6 yol / 11 operasyon | Kod üretim kaynağı olarak kullanma |
 | Canlı abonelik topic değerleri | ClientWebhook POST sayfasında 41 | Abonelik doğrulamasında doğrudan endpoint sözleşmesini esas al |
 | Alanları belgelenmiş webhook topic'leri | Webhooks genel tablosunda 37 | Payload alanı beklentisinde bu tabloyu esas al |
@@ -76,13 +77,13 @@ Canlı belgede açıkça yazmayan davranışı “IdeaSoft garantisi” gibi anl
 - Aynı webhook'un yalnız bir kez geleceğini varsaymak.
 - Commit mesajına veya trailer alanına yapay zekâ üretim/ortak-yazar imzası eklemek.
 
-## Store API desteği eklenecekse
+## Store API desteğini değiştirirken
 
-1. Ayrı `IdeaSoftStoreClient` tasarla.
-2. Yalnız `/api` altındaki göreli yolları kabul et.
+1. `IdeaSoftStoreClient` ayrımını koru; Admin istemcinin tabanını değiştirme.
+2. Store istemcisinde yalnız `/api` altındaki göreli yolları kabul et.
 3. Canlı Store endpoint sayfalarından istek/cevap sözleşmesi çıkar.
 4. Admin ve Store modellerini alan alan karşılaştır.
-5. Ayrı davranış testleri ve salt-okunur console smoke testleri ekle.
+5. Ayrı davranış testlerini ve `IdeaSoftStoreApi.ConsoleTest` self-testini güncelle.
 6. Secret'ları yalnız ortam değişkeni/secret manager üzerinden al.
 7. Canlı yazma testini açık kullanıcı onayı olmadan çalıştırma.
 
@@ -105,6 +106,7 @@ Doküman değişikliği bile olsa en az şu komutlar çalıştırılmalıdır:
 dotnet build IdeaSoftApiIntegration.sln -c Release -warnaserror
 dotnet run --project IdeaSoftApiClient.Tests -c Release
 dotnet run --project samples/IdeaSoftApi.ConsoleTest -c Release -- --self-test
+dotnet run --project samples/IdeaSoftStoreApi.ConsoleTest -c Release -- --self-test
 git diff --check
 git status --short
 ```

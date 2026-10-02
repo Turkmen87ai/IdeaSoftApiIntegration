@@ -7,9 +7,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageId>IdeaSoftApiClient</PackageId>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Authors>İsmail Türkmen</Authors>
-    <Description>OAuth2 destekli, .NET 8 için sade IdeaSoft Admin API istemcisi.</Description>
+    <Description>OAuth2 destekli, .NET 8 için sade IdeaSoft Admin ve Store API istemcisi.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Turkmen87ai/IdeaSoftApiIntegration</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

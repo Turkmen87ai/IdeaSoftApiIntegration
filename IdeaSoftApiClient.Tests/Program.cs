@@ -8,7 +8,9 @@ using System.Text;
 var tests = new (string Name, Func<Task> Run)[]
 {
     ("OAuth izin adresi", TestAuthorizationUri),
-    ("Bearer ve liste cevabı", TestBearerAndList),
+    ("Admin Bearer ve liste cevabı", TestBearerAndList),
+    ("Store Bearer ve liste cevabı", TestStoreBearerAndList),
+    ("Store harici URL engeli", TestStoreExternalUrlRejection),
     ("Data zarfı", TestDataEnvelope),
     ("COUNT nesnesi", TestCountObject),
     ("API hatası", TestApiError),
@@ -61,6 +63,37 @@ static async Task TestBearerAndList()
     var response = await client.Products.ListAsync(page: 2, limit: 10);
     Equal(1, response.Data.Count);
     Equal("K-1", response.Data[0].Sku);
+}
+
+static async Task TestStoreBearerAndList()
+{
+    var handler = new StubHandler((request, _) =>
+    {
+        Equal("Bearer", request.Headers.Authorization?.Scheme);
+        Equal("store-token", request.Headers.Authorization?.Parameter);
+        Equal("/api/products?page=2&limit=10", request.RequestUri?.PathAndQuery);
+        return Json(HttpStatusCode.OK, "[{\"id\":8,\"name\":\"Defter\",\"sku\":\"D-1\"}]");
+    });
+    using var httpClient = new HttpClient(handler);
+    using var client = new IdeaSoftStoreClient(new ApiConfig("https://demo.myideasoft.com"), "store-token", httpClient);
+    var response = await client.Products.ListAsync(page: 2, limit: 10);
+    Equal(1, response.Data.Count);
+    Equal("D-1", response.Data[0].Sku);
+}
+
+static async Task TestStoreExternalUrlRejection()
+{
+    using var client = new IdeaSoftStoreClient(new ApiConfig("https://demo.myideasoft.com"), "store-token");
+
+    try
+    {
+        await client.SendAsync<object>(HttpMethod.Get, "https://example.com/token-sizdirma");
+        throw new Exception("Store istemcisi harici URL kabul etti.");
+    }
+    catch (ArgumentException)
+    {
+        // Beklenen güvenlik davranışı.
+    }
 }
 
 static async Task TestDataEnvelope()

@@ -57,24 +57,24 @@ catch (OperationCanceledException)
 }
 catch (ApiException exception)
 {
-    PrintApiError("IdeaSoft isteği", exception);
+    PrintApiError("IdeaSoft Store API", exception);
     return 2;
 }
 catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or UriFormatException)
 {
-    Console.Error.WriteLine($"Yapılandırma hatası: {exception.Message}");
-    return 1;
+    Console.Error.WriteLine($"[HATA] {exception.Message}");
+    return 2;
 }
 
 static async Task<bool> RunSelfTestsAsync(CancellationToken cancellationToken)
 {
-    Console.WriteLine("Yerel kütüphane testleri başlıyor; ağ bağlantısı ve kimlik bilgisi kullanılmayacak...\n");
+    Console.WriteLine("Store API yerel testleri başlıyor; ağ bağlantısı ve kimlik bilgisi kullanılmayacak...\n");
 
-    var tests = new (string Name, Func<Task> Test)[]
+    var tests = new (string Name, Func<Task> Run)[]
     {
         ("Mağaza URL normalizasyonu", TestStoreUrlNormalizationAsync),
         ("OAuth izin URL'si ve state", TestAuthorizationUriAsync),
-        ("Bearer başlığı ve Admin API yolu", () => TestBearerRequestAsync(cancellationToken)),
+        ("Bearer başlığı ve Store API yolu", () => TestBearerRequestAsync(cancellationToken)),
         ("Harici URL güvenlik engeli", TestExternalUrlRejectionAsync)
     };
 
@@ -83,9 +83,9 @@ static async Task<bool> RunSelfTestsAsync(CancellationToken cancellationToken)
     {
         try
         {
-            await test.Test();
-            successful++;
+            await test.Run();
             Console.WriteLine($"[BAŞARILI] {test.Name}");
+            successful++;
         }
         catch (Exception exception)
         {
@@ -93,29 +93,27 @@ static async Task<bool> RunSelfTestsAsync(CancellationToken cancellationToken)
         }
     }
 
-    Console.WriteLine($"\nYerel sonuç: {successful}/{tests.Length} test başarılı.");
+    Console.WriteLine($"\nStore API yerel sonuç: {successful}/{tests.Length} test başarılı.");
     return successful == tests.Length;
 }
 
 static async Task<bool> RunLiveTestsAsync(CancellationToken cancellationToken)
 {
-    var storeUrl = Required(StoreUrlVariable);
-    var config = new ApiConfig(storeUrl);
+    var config = new ApiConfig(Required(StoreUrlVariable));
     var accessToken = Environment.GetEnvironmentVariable(AccessTokenVariable);
-
     if (string.IsNullOrWhiteSpace(accessToken))
         accessToken = await AcquireAccessTokenAsync(config, cancellationToken);
 
-    using var client = new IdeaSoftClient(config, accessToken);
+    using var client = new IdeaSoftStoreClient(config, accessToken);
     return await RunReadOnlyTestsAsync(client, cancellationToken);
 }
 
 static Task TestStoreUrlNormalizationAsync()
 {
-    var config = new ApiConfig("https://ornek.myideasoft.com/panel/clients");
+    var config = new ApiConfig("https://ornek.myideasoft.com/panel/test?x=1");
     Ensure(
         config.StoreUri.AbsoluteUri == "https://ornek.myideasoft.com/",
-        "Mağaza URL'si origin adresine indirgenmedi.");
+        $"Beklenmeyen mağaza kökü: {config.StoreUri}");
     return Task.CompletedTask;
 }
 
@@ -140,9 +138,9 @@ static async Task TestBearerRequestAsync(CancellationToken cancellationToken)
 {
     var handler = new RecordingHandler();
     using var httpClient = new HttpClient(handler);
-    using var client = new IdeaSoftClient(
+    using var client = new IdeaSoftStoreClient(
         new ApiConfig("https://ornek.myideasoft.com"),
-        "yerel-test-token",
+        "yerel-store-test-token",
         httpClient);
 
     var response = await client.Products.ListAsync(page: 1, limit: 1, cancellationToken: cancellationToken);
@@ -150,15 +148,15 @@ static async Task TestBearerRequestAsync(CancellationToken cancellationToken)
     Ensure(response.StatusCode == HttpStatusCode.OK, "Test cevabı başarılı işlenmedi.");
     var recordedRequest = handler.LastRequest ?? throw new InvalidOperationException("HTTP isteği yakalanmadı.");
     Ensure(recordedRequest.AuthorizationScheme == "Bearer", "Bearer şeması kullanılmadı.");
-    Ensure(recordedRequest.AuthorizationParameter == "yerel-test-token", "Access token başlığa eklenmedi.");
+    Ensure(recordedRequest.AuthorizationParameter == "yerel-store-test-token", "Access token başlığa eklenmedi.");
     Ensure(
-        recordedRequest.Uri == "https://ornek.myideasoft.com/admin-api/products?page=1&limit=1",
-        $"Beklenmeyen API adresi: {recordedRequest.Uri}");
+        recordedRequest.Uri == "https://ornek.myideasoft.com/api/products?page=1&limit=1",
+        $"Beklenmeyen Store API adresi: {recordedRequest.Uri}");
 }
 
 static async Task TestExternalUrlRejectionAsync()
 {
-    using var client = new IdeaSoftClient(new ApiConfig("https://ornek.myideasoft.com"), "yerel-test-token");
+    using var client = new IdeaSoftStoreClient(new ApiConfig("https://ornek.myideasoft.com"), "yerel-store-test-token");
 
     try
     {
@@ -191,7 +189,7 @@ static async Task<string> AcquireAccessTokenAsync(ApiConfig config, Cancellation
         var expectedState = IdeaSoftOAuthClient.CreateState();
         var authorizationUri = oauth.CreateAuthorizationUri(clientId, redirectUri, expectedState);
 
-        Console.WriteLine("\n1. Aşağıdaki adresi tarayıcıda açın ve ismail kullanıcısıyla izin verin:");
+        Console.WriteLine("\n1. Aşağıdaki adresi tarayıcıda açın ve yetkili kullanıcıyla izin verin:");
         Console.WriteLine(authorizationUri);
         Console.WriteLine("\n2. Yönlendirme tamamlanınca tarayıcının adres çubuğundaki TAM URL'yi hemen buraya yapıştırın.");
         Console.WriteLine("   Authorization code yaklaşık 30 saniye geçerlidir.");
@@ -215,25 +213,25 @@ static async Task<string> AcquireAccessTokenAsync(ApiConfig config, Cancellation
     return token.AccessToken;
 }
 
-static async Task<bool> RunReadOnlyTestsAsync(IdeaSoftClient client, CancellationToken cancellationToken)
+static async Task<bool> RunReadOnlyTestsAsync(IdeaSoftStoreClient client, CancellationToken cancellationToken)
 {
-    Console.WriteLine("\nSalt okunur bağlantı testleri başlıyor...");
+    Console.WriteLine("\nStore API salt okunur bağlantı testleri başlıyor...");
 
     var results = new[]
     {
         await RunTestAsync(
-            "Ürünler",
+            "Store ürünler",
             async () => (await client.Products.ListAsync(page: 1, limit: 1, cancellationToken: cancellationToken)).StatusCode),
         await RunTestAsync(
-            "Kategoriler",
+            "Store kategoriler",
             async () => (await client.Categories.ListAsync(page: 1, limit: 1, cancellationToken: cancellationToken)).StatusCode),
         await RunTestAsync(
-            "Siparişler",
+            "Store siparişler",
             async () => (await client.Orders.ListAsync(page: 1, limit: 1, cancellationToken: cancellationToken)).StatusCode)
     };
 
     var successful = results.Count(result => result);
-    Console.WriteLine($"\nSonuç: {successful}/{results.Length} test başarılı.");
+    Console.WriteLine($"\nStore API sonucu: {successful}/{results.Length} test başarılı.");
     return successful == results.Length;
 }
 
@@ -300,10 +298,10 @@ static void Ensure(bool condition, string message)
 
 static void PrintUsage()
 {
-    Console.WriteLine("IdeaSoft Admin API Console Test");
-    Console.WriteLine("  --self-test  Ağ kullanmadan Admin istemcisini test eder (varsayılan).");
-    Console.WriteLine("  --live       Gerçek mağazada yalnız Admin ürün/kategori/sipariş GET çağrıları yapar.");
-    Console.WriteLine("  --all        Önce yerel Admin testlerini, ardından canlı Admin testini çalıştırır.");
+    Console.WriteLine("IdeaSoft Store API Console Test");
+    Console.WriteLine("  --self-test  Ağ kullanmadan Store istemcisini test eder (varsayılan).");
+    Console.WriteLine("  --live       Gerçek mağazada yalnız Store ürün/kategori/sipariş GET çağrıları yapar.");
+    Console.WriteLine("  --all        Önce yerel Store testlerini, ardından canlı Store testini çalıştırır.");
 }
 
 static void PrintApiError(string operation, ApiException exception)
