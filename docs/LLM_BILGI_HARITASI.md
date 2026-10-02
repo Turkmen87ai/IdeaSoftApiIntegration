@@ -9,8 +9,9 @@ Son doğrulama: **2 Ekim 2026**
 1. Kök [README](../README.md)
 2. [Admin API ve Store API rehberi](ADMIN_STORE_API_REHBERI.md)
 3. [Webhook rehberi](WEBHOOK_REHBERI.md)
-4. Admin kodu değişecekse `IdeaSoftApiClient/IdeaSoftClient.cs`; Store kodu değişecekse `IdeaSoftApiClient/IdeaSoftStoreClient.cs`
-5. İlgili örnek değişecekse `samples/AdminApiTest` veya `samples/StoreApiTest` README dosyası
+4. [MCP rehberi](MCP_REHBERI.md)
+5. Admin kodu değişecekse `IdeaSoftApiClient/IdeaSoftClient.cs`; Store kodu değişecekse `IdeaSoftApiClient/IdeaSoftStoreClient.cs`
+6. İlgili örnek değişecekse `samples/AdminApiTest` veya `samples/StoreApiTest` README dosyası
 
 `.ai-workspace` klasörü varsa yerel çalışma protokolü, PRD, sorun günlüğü ve görev kilidi için ayrıca tamamen okunmalıdır. Bu klasör bilerek Git'e gönderilmez ve yeni klonda bulunmayabilir.
 
@@ -21,7 +22,7 @@ Bu repo .NET 8 ile yazılmış, OAuth2/Bearer kullanan ve dış URL'ye token sı
 ## Doğrulanmış sabitler
 
 ```yaml
-runtime: dotnet_8
+runtime: [dotnet_8, python_3_10_plus]
 public_clients:
   admin: IdeaSoftClient
   store: IdeaSoftStoreClient
@@ -36,6 +37,13 @@ webhook_signature_header: X-Ideashop-Hmac-Sha256
 webhook_signature: Base64(HMAC-SHA256(raw_body, client_secret))
 secrets_in_git: forbidden
 ai_signature_in_commits: forbidden
+mcp_servers:
+  dotnet: IdeaSoftApi.Mcp.DotNet
+  python: IdeaSoftApi.Mcp.Python
+mcp_transport: stdio
+mcp_tool_parity: required
+mcp_writes_default: disabled
+mcp_write_confirmation: IDEASOFT_WRITE_CONFIRMED
 ```
 
 ## Kaynak önceliği
@@ -107,6 +115,9 @@ dotnet build IdeaSoftApiIntegration.sln -c Release -warnaserror
 dotnet run --project IdeaSoftApiClient.Tests -c Release
 dotnet run --project samples/AdminApiTest -c Release -- --self-test
 dotnet run --project samples/StoreApiTest -c Release -- --self-test
+dotnet run --project IdeaSoftApi.Mcp.DotNet.Tests -c Release
+uv sync --project IdeaSoftApi.Mcp.Python
+uv run --project IdeaSoftApi.Mcp.Python python -m unittest discover -s IdeaSoftApi.Mcp.Python/tests -v
 git diff --check
 git status --short
 ```

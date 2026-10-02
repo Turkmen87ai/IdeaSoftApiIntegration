@@ -16,11 +16,13 @@ IdeaSoft Admin API ve Store API ile .NET 8 üzerinden çalışmayı kolaylaştı
 - Diğer Store API yolları için ayrı `IdeaSoftStoreClient.SendAsync` ve `Resource<T>` metotları
 - Hata kodu, cevap gövdesi ve istek kimliğini taşıyan `ApiException`
 - Harici test paketi gerektirmeyen ayrı Admin ve Store test projeleri
+- Aynı 12 araç sözleşmesini kullanan ayrı .NET 8 ve Python MCP sunucuları
 
 ## Öğrenme ve devir belgeleri
 
 - [Admin API ve Store API farkları](docs/ADMIN_STORE_API_REHBERI.md): yol, kapsam, OAuth, kullanım alanı, canlı grup/operasyon karşılaştırması ve iki istemcinin güvenli ayrımı.
 - [Webhook rehberi](docs/WEBHOOK_REHBERI.md): canlı abonelik endpoint'indeki 41 topic, alanları belgelenmiş 37 V8 olayı, abonelik CRUD işlemleri, HMAC-SHA256 doğrulaması, 10 saniyelik yanıt kuralı ve .NET örneği.
+- [MCP rehberi](docs/MCP_REHBERI.md): .NET 8 ve Python sunucuları, ortak araçlar, kurulum, OAuth, webhook, güvenli yazma kilidi ve çoklu araç devir kuralları.
 - [LLM bilgi haritası](docs/LLM_BILGI_HARITASI.md): farklı kodlama ajanları için kaynak önceliği, değişmezler, yasaklar ve doğrulama listesi.
 
 `IdeaSoftClient` yalnız **Admin API** (`/admin-api`), `IdeaSoftStoreClient` yalnız **Store API** (`/api`) çağrılarını yapar. Aynı token akışını kullansalar da endpoint sözleşmeleri ve test uygulamaları ayrıdır.
@@ -51,6 +53,19 @@ dotnet run --project samples/StoreApiTest -- --self-test
 ```
 
 İki uygulamanın varsayılan self-test modu ağ veya kimlik bilgisi kullanmadan OAuth URL'sini, Bearer başlığını, kendi API yolunu ve token sızıntısı engelini doğrular. `--live` modu kendi yüzeyindeki ürün, kategori ve sipariş uçlarından en fazla bir kayıt ister; hiçbir veriyi değiştirmez. Client ID, Client Secret ve token değerleri yalnızca ortam değişkenlerinden okunur ve diske yazılmaz.
+
+## MCP sunucuları
+
+`IdeaSoftApi.Mcp.DotNet` ve `IdeaSoftApi.Mcp.Python`, Admin API, Store API, OAuth ve webhook işlerini MCP araçları olarak sunar. İkisi de aynı araç adlarını kullanır; yalnız çalışma zamanı farklıdır. Yazma araçları varsayılan kapalıdır ve iki aşamalı açık onay gerektirir.
+
+```powershell
+dotnet run --project IdeaSoftApi.Mcp.DotNet -c Release
+
+uv sync --project IdeaSoftApi.Mcp.Python
+uv run --project IdeaSoftApi.Mcp.Python ideasoftapi-mcp
+```
+
+Kurulum, ortam değişkenleri, araç tablosu ve güvenlik kuralları için [MCP rehberini](docs/MCP_REHBERI.md) okuyun.
 
 ## 1. OAuth2 izin adresini oluşturma
 

@@ -6,6 +6,11 @@
 *.suo
 TestResults/
 coverage/
+**/__pycache__/
+*.py[cod]
+**/.venv/
+.pytest_cache/
+dist/
 
 # Yerel sırlar
 .env
