@@ -16,6 +16,7 @@ IdeaSoft Admin API ve Store API ile .NET 8 üzerinden çalışmayı kolaylaştı
 - Diğer Store API yolları için ayrı `IdeaSoftStoreClient.SendAsync` ve `Resource<T>` metotları
 - Hata kodu, cevap gövdesi ve istek kimliğini taşıyan `ApiException`
 - Harici test paketi gerektirmeyen ayrı Admin ve Store test projeleri
+- Hem .NET hem Python MCP sunucusunu sınayan .NET 8 ve Python örnek MCP istemcileri
 - Aynı 12 araç sözleşmesini kullanan ayrı .NET 8 ve Python MCP sunucuları
 
 ## Öğrenme ve devir belgeleri
@@ -45,7 +46,7 @@ dotnet build
 dotnet run --project IdeaSoftApiClient.Tests
 ```
 
-`samples` altında yalnız iki açıkça ayrılmış örnek vardır: Admin API için [AdminApiTest](samples/AdminApiTest/README.md), Store API için [StoreApiTest](samples/StoreApiTest/README.md).
+`samples` altında Admin API için [AdminApiTest](samples/AdminApiTest/README.md), Store API için [StoreApiTest](samples/StoreApiTest/README.md) bulunur.
 
 ```powershell
 dotnet run --project samples/AdminApiTest -- --self-test
@@ -53,6 +54,8 @@ dotnet run --project samples/StoreApiTest -- --self-test
 ```
 
 İki uygulamanın varsayılan self-test modu ağ veya kimlik bilgisi kullanmadan OAuth URL'sini, Bearer başlığını, kendi API yolunu ve token sızıntısı engelini doğrular. `--live` modu kendi yüzeyindeki ürün, kategori ve sipariş uçlarından en fazla bir kayıt ister; hiçbir veriyi değiştirmez. Client ID, Client Secret ve token değerleri yalnızca ortam değişkenlerinden okunur ve diske yazılmaz.
+
+MCP bağlantısını öğrenmek ve iki sunucuyu da yerelde sınamak için ayrıca [.NET 8 MCP istemci örneği](samples/McpDotNetTest/README.md) ile [Python MCP istemci örneği](samples/McpPythonTest/README.md) vardır. Bu örnekler gerçek `stdio` MCP bağlantısı kurar; canlı mağazaya bağlanmaz ve alt sürece `IDEASOFT_*` değişkenlerini aktarmaz.
 
 ## MCP sunucuları
 
@@ -66,6 +69,29 @@ uv run --project IdeaSoftApi.Mcp.Python ideasoftapi-mcp
 ```
 
 Kurulum, ortam değişkenleri, araç tablosu ve güvenlik kuralları için [MCP rehberini](docs/MCP_REHBERI.md) okuyun.
+
+### MCP örnek istemcilerini çalıştırma
+
+```powershell
+# Bir kez hazırlanır
+dotnet build IdeaSoftApiIntegration.sln -c Release -warnaserror
+uv sync --project IdeaSoftApi.Mcp.Python
+uv sync --project samples/McpPythonTest
+
+# .NET istemci → .NET sunucu
+dotnet run --project samples/McpDotNetTest -c Release -- --server dotnet
+
+# .NET istemci → Python sunucu
+dotnet run --project samples/McpDotNetTest -c Release -- --server python
+
+# Python istemci → Python sunucu
+uv run --offline --project samples/McpPythonTest ideasoftapi-mcp-python-test --server python
+
+# Python istemci → .NET sunucu
+uv run --offline --project samples/McpPythonTest ideasoftapi-mcp-python-test --server dotnet
+```
+
+Her çalışma; 12 aracı, 3 rehber kaynağını ve yalnız yerel çalışan güvenli araç çağrılarını doğrular.
 
 ## 1. OAuth2 izin adresini oluşturma
 

@@ -1,5 +1,7 @@
 using IdeaSoftApiClient.Config;
 
+using System.Text.Json.Serialization;
+
 namespace IdeaSoftApi.Mcp.DotNet.Configuration;
 
 public sealed class IdeaSoftMcpOptions
@@ -76,7 +78,7 @@ public sealed class IdeaSoftMcpOptions
 
 public sealed record ConfigurationStatus(
     string ServerName,
-    string? StoreUrl,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.Never)] string? StoreUrl,
     bool AccessTokenConfigured,
     bool RefreshFlowConfigured,
     bool AuthorizationUrlConfigured,

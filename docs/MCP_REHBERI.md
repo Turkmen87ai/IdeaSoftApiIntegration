@@ -129,6 +129,28 @@ uv run --project IdeaSoftApi.Mcp.Python python -m unittest discover -s IdeaSoftA
 
 Bu testler sahte HTTP yanıtları kullanır; gerçek mağazaya bağlanmaz. Canlı test ancak kullanıcı açıkça istediğinde, kimlik bilgileri güvenli ortam değişkenlerinde bulunduğunda ve yöntem salt okunur olduğunda yapılmalıdır.
 
+## MCP istemci örnekleri
+
+`samples/McpDotNetTest` resmi .NET MCP SDK'sını, `samples/McpPythonTest` resmi Python MCP SDK'sını kullanır. Her iki istemci de hem .NET hem Python sunucusunu gerçek `stdio` protokolü üzerinden başlatabilir. Böylece aynı araç sözleşmesinin iki çalışma zamanı arasında uyumlu olduğu dört yönde doğrulanır:
+
+| İstemci | Sunucu | Komut |
+|---|---|---|
+| .NET 8 | .NET 8 | `dotnet run --project samples/McpDotNetTest -c Release -- --server dotnet` |
+| .NET 8 | Python | `dotnet run --project samples/McpDotNetTest -c Release -- --server python` |
+| Python | Python | `uv run --offline --project samples/McpPythonTest ideasoftapi-mcp-python-test --server python` |
+| Python | .NET 8 | `uv run --offline --project samples/McpPythonTest ideasoftapi-mcp-python-test --server dotnet` |
+
+Önce `dotnet build IdeaSoftApiIntegration.sln -c Release -warnaserror`, `uv sync --project IdeaSoftApi.Mcp.Python` ve `uv sync --project samples/McpPythonTest` çalıştırın. Her örnek aşağıdakileri doğrular:
+
+1. Beklenen 12 MCP aracı keşfediliyor.
+2. Beklenen 3 MCP kaynağı keşfediliyor.
+3. `ideasoft_capabilities` yapılandırılmış sonuç döndürüyor.
+4. `ideasoft_status`, yazmanın kapalı ve secret dönüşünün engelli olduğunu gösteriyor.
+5. `ideasoft_migration_checklist` adımları ve güvenlik kurallarını döndürüyor.
+6. `ideasoft://guide/security` kaynağı okunabiliyor.
+
+Bu örnekler canlı Admin veya Store endpoint'i çağırmaz. Alt sürece yalnız işletim sistemi için gereken sınırlı ortam değişkenleri aktarılır; `IDEASOFT_*` değişkenleri özellikle dışarıda bırakılır. Bu nedenle geliştiricinin terminalinde Client ID, Client Secret veya token tanımlı olsa bile örnek MCP sunucusuna geçmez.
+
 ## Birden fazla araçla devam etme kuralları
 
 Başka bir geliştirme aracı projeyi değiştirmeden önce:

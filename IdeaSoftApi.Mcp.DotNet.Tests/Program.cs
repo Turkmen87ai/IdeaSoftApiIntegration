@@ -6,10 +6,13 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var tests = new (string Name, Func<Task> Run)[]
 {
     ("Secret göstermeyen durum", TestStatusAsync),
+    ("Durum şeması null alan uyumu", TestStatusSchemaAsync),
     ("OAuth izin URL'si", TestAuthorizationUrlAsync),
     ("Admin GET yolu", TestAdminGetAsync),
     ("Store liste yolu", TestStoreListAsync),
@@ -49,6 +52,19 @@ static Task TestStatusAsync()
     Equal(true, status.AccessTokenConfigured);
     Equal(false, status.SecretsAreReturned);
     Equal(false, status.WritesEnabled);
+    return Task.CompletedTask;
+}
+
+static Task TestStatusSchemaAsync()
+{
+    var status = new IdeaSoftMcpOptions().ToStatus();
+    var json = JsonSerializer.Serialize(status, new JsonSerializerOptions
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    });
+    using var document = JsonDocument.Parse(json);
+    Ensure(document.RootElement.TryGetProperty("StoreUrl", out var storeUrl), "StoreUrl şema alanı atlandı.");
+    Equal(JsonValueKind.Null, storeUrl.ValueKind);
     return Task.CompletedTask;
 }
 
